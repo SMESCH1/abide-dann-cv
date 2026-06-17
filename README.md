@@ -4,7 +4,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-ee4c2c.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![uv](https://img.shields.io/badge/built%20with-uv-de5fe9.svg)](https://github.com/astral-sh/uv)
-[![CI](https://github.com/SMESCH1/TP_CV/actions/workflows/ci.yml/badge.svg)](https://github.com/SMESCH1/TP_CV/actions/workflows/ci.yml)
+[![CI](https://github.com/SMESCH1/abide-dann-cv/actions/workflows/ci.yml/badge.svg)](https://github.com/SMESCH1/abide-dann-cv/actions/workflows/ci.yml)
 
 > 🇪🇸 **Versión en español:** [README.es.md](README.es.md)
 
@@ -132,4 +132,4 @@ Group project for **Visión y Percepción Computarizada**, M.Sc. in Artificial I
 - Sebastián Mesch Henriques · [@SMESCH1](https://github.com/SMESCH1)
 - Leandro Carcagno · [@lcgno](https://github.com/lcgno)
 
-This repository is a portfolio fork of the original team repository. Code is MIT-licensed; the **ABIDE dataset and its CPAC derivatives are governed by their own terms of use** — see the [ABIDE](http://fcon_1000.projects.nitrc.org/indi/abide/) and Preprocessed Connectomes Project documentation.
+This repository is the portfolio edition of a team project. Code is MIT-licensed; the **ABIDE dataset and its CPAC derivatives are governed by their own terms of use** — see the [ABIDE](http://fcon_1000.projects.nitrc.org/indi/abide/) and Preprocessed Connectomes Project documentation.
