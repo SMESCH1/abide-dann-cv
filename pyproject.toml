@@ -1,0 +1,51 @@
+[project]
+name = "abide-dann-cv"
+version = "0.1.0"
+description = "ASD vs. control classification from rs-fMRI derived maps (fALFF/ReHo) as 2D images, with a CNN and adversarial domain generalization (DANN) across acquisition sites."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12, <3.13"
+
+dependencies = [
+    "matplotlib>=3.10.8",
+    "mlflow>=3.11.1",
+    "nibabel>=5.4.2",
+    "nilearn>=0.13.1",
+    "numpy>=2.4.4",
+    "optuna>=4.8.0",
+    "pandas>=2.0",
+    "pillow>=12.2.0",
+    "python-pptx>=1.0.2",
+    "scikit-learn>=1.5",
+    "torch>=2.3",
+    "torchvision>=0.18",
+    "tqdm>=4.0",
+]
+
+[project.scripts]
+train = "scripts.train:main"
+evaluate = "scripts.evaluate:main"
+tune = "scripts.tune:main"
+compare-dann = "scripts.compare_dann:main"
+downloader = "scripts.downloader:main_cli"
+report = "scripts.report:main"
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv]
+package = true
+environments = ["sys_platform == 'linux'", "sys_platform == 'win32'"]
+
+[tool.setuptools.packages.find]
+include = ["scripts*"]

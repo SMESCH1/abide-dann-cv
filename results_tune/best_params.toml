@@ -1,0 +1,10 @@
+# best_params.toml — generado automáticamente por tune.py.
+# Trial 17  AUC=0.5962  profile=standard  2026-05-29 00:27:39
+# Copialo/mergealo a config.toml para entrenar el modelo final.
+# Faltan epochs/seed (no se tunean): tomalos de config.toml.
+
+lr = 0.0013902742846024687
+batch_size = 64
+dann_alpha = 0.3858270960717525
+dropout = 0.01691165942407773
+label_smoothing = 0.15925224852764241

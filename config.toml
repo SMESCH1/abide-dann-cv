@@ -1,0 +1,24 @@
+# Configuración del experimento ASD vs TC: DANN vs sin DANN.
+#
+# Todos estos valores se aplican IGUAL a los dos modelos de la comparación.
+# Lo único que cambia entre ellos es `dann_alpha`: en el modelo "sin DANN"
+# se fuerza a 0.0 automáticamente (alpha=0 anula el Gradient Reversal Layer,
+# así que el extractor de features no se adapta al dominio).
+#
+# Flujo sugerido:
+#   1. uv run python scripts/tune.py            # busca hiperparámetros
+#   2. Copiá acá los best_params de results_tune/best_params.toml
+#   3. uv run python scripts/compare_dann.py    # entrena ambos con esta config
+#
+# Lo consumen train.py (entrenamiento individual) y compare_dann.py (ambos).
+
+lr = 0.0003179179428338127
+batch_size = 64
+dann_alpha = 0.21233911067827616
+dropout = 0.018182496720710064
+label_smoothing = 0.045851127463358454
+
+patience = 55
+seed = 42
+epochs = 200
+scheduler_patience = 20

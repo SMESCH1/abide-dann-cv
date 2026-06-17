@@ -1,0 +1,64 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Dataset (ignorar contenido, mantener carpeta)
+dataset/*
+!dataset/.gitkeep
+abide_data/
+
+#Resultados
+results/*
+!results/.gitkeep
+!results/best_params.toml
+
+#Resultados tune
+results_tune/*
+!results_tune/.gitkeep
+!results_tune/best_params.toml
+
+#MLFlow
+mlruns/*
+!mlruns/.gitkeep
+
+#Resultados comparacion
+results_no_dann/*
+!results_no_dann/.gitkeep
+!results_no_dann/confusion_matrix.png
+!results_no_dann/best_model.pth
+!results_no_dann/classification_report.txt
+!results_no_dann/metrics_summary.json
+!results_no_dann/roc_curve.png
+!results_no_dann/training_curves.png
+
+
+results_dann/*
+!results_dann/.gitkeep
+!results_dann/confusion_matrix.png
+!results_dann/best_model.pth
+!results_dann/classification_report.txt
+!results_dann/metrics_summary.json
+!results_dann/roc_curve.png
+!results_dann/training_curves.png
+
+# Claude Code
+.claude/
+
+# Documentos de trabajo interno (no van al repo público)
+docs/ROADMAP.md
+docs/ANALISIS_PROBLEMAS.md
+docs/ANALISIS_PROBLEMAS_REVISION.md
+docs/REVISION_TECNICA.md
+docs/ENTENDIMIENTO_PROYECTO.md
+
+# PPT regenerable (script en scripts/make_ppt.py)
+artifacts/*.pptx
+
+.agents/

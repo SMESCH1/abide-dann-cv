@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    name: Smoke test (compile + lockfile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Byte-compile all sources (syntax check)
+        run: uv run --no-project python -m compileall -q scripts main.py
+
+      - name: Verify results report reproduces from artifacts
+        run: uv run --no-project python scripts/report.py

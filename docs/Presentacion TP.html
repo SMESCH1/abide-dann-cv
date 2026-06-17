@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Computer Vision — ASD vs TC · ABIDE</title>
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Hanken+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Granola warm-glass tokens */
+  --cream-50:#fffdf8; --cream-100:#fffbf4; --cream-200:#faf8f2;
+  --sand-200:#f4e4d4; --sand-300:#fff4e0;
+  --terracotta:#b45837; --terracotta-deep:#99462a; --terracotta-soft:#e4b894;
+  --ink:#1a1814; --ink-60:#6a5f52; --ink-40:#9c9082;
+  --bg:#faf8f2;
+  --surface:rgba(255,251,244,0.72);
+  --surface-2:rgba(255,251,244,0.55);
+  --surface-solid:#fffbf4;
+  --border:rgba(26,24,20,0.08);
+  --border-strong:rgba(26,24,20,0.14);
+  --accent:#b45837; --accent-soft:#e4b894; --accent-tint:rgba(180,88,55,0.08);
+  --positive:#5b7a52; --warning:#c08a2e; --negative:#b04a3a;
+  --font-display:'Newsreader','Tiempos Headline',Georgia,serif;
+  --font-body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --w-light:300; --w-regular:400; --w-medium:500; --w-semi:600;
+
+  /* projection type scale */
+  --type-mega:150px;
+  --type-title:66px;
+  --type-subtitle:40px;
+  --type-h3:30px;
+  --type-body:30px;
+  --type-small:26px;
+  --type-overline:24px;
+  --pad-x:110px;
+  --pad-top:92px;
+  --pad-bottom:80px;
+  --gap-title:44px;
+  --gap-item:24px;
+
+  --sh-2:0 4px 16px rgba(180,88,55,0.06);
+  --sh-3:0 8px 32px rgba(180,88,55,0.08);
+  --sh-4:0 16px 48px rgba(180,88,55,0.10);
+  --inner-hi:inset 0 1px 0 rgba(255,255,255,0.6);
+  --blur:blur(16px) saturate(150%);
+  --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#000;font-family:var(--font-body);color:var(--ink);}
+
+/* ---- slide base ---- */
+.slide{
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--bg);
+  background-image:
+    radial-gradient(at 28% 0%, #fff4e0 0%, transparent 52%),
+    radial-gradient(at 82% 18%, #f4e4d4 0%, transparent 58%);
+  overflow:hidden;
+}
+.pad{
+  position:absolute; inset:0;
+  padding:var(--pad-top) var(--pad-x) var(--pad-bottom);
+  display:flex; flex-direction:column;
+}
+/* dark variant */
+.slide.dark{
+  background:#1a1814;
+  background-image:
+    radial-gradient(at 22% 12%, rgba(180,88,55,0.28) 0%, transparent 55%),
+    radial-gradient(at 86% 88%, rgba(228,184,148,0.12) 0%, transparent 60%);
+  color:#f4ece2;
+}
+
+/* ---- type ---- */
+.overline{
+  font-family:var(--font-body);
+  font-size:var(--type-overline);
+  font-weight:var(--w-medium);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--terracotta);
+}
+.dark .overline{ color:var(--terracotta-soft); }
+.title{
+  font-family:var(--font-display);
+  font-weight:var(--w-regular);
+  font-size:var(--type-title);
+  line-height:1.08;
+  letter-spacing:-0.02em;
+}
+.subtitle{
+  font-family:var(--font-display);
+  font-weight:var(--w-light);
+  font-size:var(--type-subtitle);
+  line-height:1.22;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+}
+.lead{
+  font-size:var(--type-body);
+  font-weight:var(--w-light);
+  line-height:1.5;
+  color:var(--ink-60);
+}
+.body{ font-size:var(--type-body); font-weight:var(--w-regular); line-height:1.5; }
+.small{ font-size:var(--type-small); font-weight:var(--w-regular); line-height:1.45; color:var(--ink-60); }
+.mono{ font-family:var(--font-mono); }
+.accent{ color:var(--terracotta); }
+.serif{ font-family:var(--font-display); }
+
+/* slide header block reused on content slides */
+.head{ margin-bottom:var(--gap-title); }
+.head .overline{ display:block; margin-bottom:18px; }
+.head .title{ font-size:54px; }
+
+/* glass card */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--sh-3),var(--inner-hi);
+}
+.dark .card{
+  background:rgba(255,251,244,0.06);
+  border:1px solid rgba(255,247,239,0.12);
+  box-shadow:none;
+}
+
+/* figure plate (white, for matplotlib) */
+.plate{
+  background:#ffffff;
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh-3),var(--inner-hi);
+  padding:20px;
+  display:flex; align-items:center; justify-content:center;
+}
+.plate img{ width:100%; height:100%; object-fit:contain; display:block; }
+
+.flex{ display:flex; }
+.col{ display:flex; flex-direction:column; }
+.grow{ flex:1; min-height:0; }
+.center{ align-items:center; justify-content:center; }
+
+/* footer chip */
+.foot{
+  position:absolute; left:var(--pad-x); bottom:46px;
+  font-size:var(--type-small); color:var(--ink-40);
+  letter-spacing:0.02em;
+  display:flex; align-items:center; gap:14px;
+}
+.foot .dot{ width:6px; height:6px; border-radius:50%; background:var(--terracotta-soft); }
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+<!-- 01 · PORTADA -->
+<section class="slide" data-label="Portada">
+  <div class="pad" style="justify-content:space-between;">
+    <div class="flex" style="justify-content:space-between; align-items:flex-start;">
+      <span class="overline">Trabajo práctico · Visión por computadora</span>
+      <span class="small mono" style="color:var(--ink-40);">Maestría en Inteligencia Artificial</span>
+    </div>
+    <div style="max-width:1500px;">
+      <h1 class="title" style="font-size:84px; margin-bottom:34px;">Detección de autismo desde resonancia funcional en reposo</h1>
+      <p class="subtitle" style="color:var(--ink-60); max-width:1280px;">Una CNN sobre cortes 2D del cerebro, con adaptación adversarial de dominio para no aprender la firma del scanner.</p>
+    </div>
+    <div class="flex" style="gap:18px; align-items:center;">
+      <span class="small" style="border:1px solid var(--border-strong); border-radius:var(--r-pill); padding:10px 22px; color:var(--ink);">Dataset ABIDE</span>
+      <span class="small" style="border:1px solid var(--border-strong); border-radius:var(--r-pill); padding:10px 22px; color:var(--ink);">ASD vs control típico</span>
+      <span class="small" style="border:1px solid var(--border-strong); border-radius:var(--r-pill); padding:10px 22px; color:var(--ink);">DANN vs no-DANN</span>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · OBJETIVO -->
+<section class="slide" data-label="Objetivo">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Objetivo</span>
+      <h2 class="title">Un trabajo con intención pedagógica</h2>
+    </div>
+    <div class="flex grow" style="gap:36px;">
+      <div class="card col" style="flex:1; padding:48px; justify-content:center; gap:22px;">
+        <p class="subtitle serif" style="font-weight:var(--w-light); line-height:1.3;">Aprender a aplicar redes convolucionales a neuroimagen funcional.</p>
+        <p class="lead">Explícitamente, <span class="accent" style="font-weight:var(--w-medium);">no es un sistema de diagnóstico clínico</span> — es un ejercicio metodológico de extremo a extremo.</p>
+      </div>
+      <div class="col" style="flex:1; gap:24px;">
+        <div class="card col" style="padding:36px; gap:10px; flex:1; justify-content:center;">
+          <span class="overline" style="font-size:var(--type-small);">La pregunta</span>
+          <p class="body">¿Se puede distinguir ASD de control típico mirando mapas funcionales del cerebro como si fueran imágenes?</p>
+        </div>
+        <div class="card col" style="padding:36px; gap:10px; flex:1; justify-content:center;">
+          <span class="overline" style="font-size:var(--type-small);">La apuesta</span>
+          <p class="body">Cortes 2D en escala de grises + una CNN liviana, en vez de las matrices de conectividad habituales.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · EL PROBLEMA -->
+<section class="slide" data-label="El problema">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">El problema</span>
+      <h2 class="title">Clasificación binaria a nivel sujeto</h2>
+    </div>
+    <div class="flex grow" style="gap:32px; align-items:stretch;">
+      <div class="card col center" style="flex:1; padding:40px; gap:14px;">
+        <span class="overline" style="color:var(--positive);">TC</span>
+        <p class="serif" style="font-size:38px; font-weight:var(--w-regular); line-height:1.2; text-align:center;">Control típico</p>
+        <p class="small" style="text-align:center;">DX_GROUP = 2 → etiqueta 0</p>
+      </div>
+      <div class="col center" style="flex:0 0 200px;">
+        <div class="serif" style="font-size:120px; color:var(--ink-40); font-weight:var(--w-light);">vs</div>
+      </div>
+      <div class="card col center" style="flex:1; padding:40px; gap:14px;">
+        <span class="overline">ASD</span>
+        <p class="serif" style="font-size:38px; font-weight:var(--w-regular); line-height:1.2; text-align:center;">Trastorno del espectro autista</p>
+        <p class="small" style="text-align:center;">DX_GROUP = 1 → etiqueta 1</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:36px; max-width:1500px;">Cada persona se resume en una sola predicción. La entrada es resonancia magnética funcional en reposo (rs-fMRI) <span class="accent">ya preprocesada</span>, del consorcio público ABIDE.</p>
+  </div>
+</section>
+
+<!-- 04 · LOS DATOS -->
+<section class="slide" data-label="Los datos">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Los datos</span>
+      <h2 class="title">ABIDE, preprocesado y en un espacio común</h2>
+    </div>
+    <div class="grow" style="display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(2,1fr); gap:28px;">
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Origen</span>
+        <p class="body">Derivados ya preprocesados de ABIDE (pipeline CPAC, estrategia <span class="mono">filt_noglobal</span>). El proyecto no corre preprocesamiento: descarga productos terminados.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Dos mapas funcionales</span>
+        <p class="body"><span class="accent">fALFF</span> y <span class="accent">ReHo</span> — volúmenes 3D que resumen la señal BOLD en reposo, vóxel por vóxel.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Espacio MNI</span>
+        <p class="body">Todos los volúmenes registrados a un template común (grilla 61×73×61, 3 mm). Un mismo índice de vóxel ≈ la misma región entre sujetos.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Escala</span>
+        <p class="body">~800 sujetos de entrenamiento, repartidos entre <span class="accent">~20 scanners</span> con protocolos distintos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · APUESTA 1 -->
+<section class="slide" data-label="3D a 2D">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Apuesta metodológica · 1</span>
+      <h2 class="title">De volúmenes 3D a imágenes 2D</h2>
+    </div>
+    <div class="flex grow" style="gap:48px; align-items:center;">
+      <div class="col" style="flex:1.1; gap:26px;">
+        <p class="lead" style="color:var(--ink);">Cada sujeto se reduce a una <span class="accent" style="font-weight:var(--w-medium);">imagen multicanal</span> y la CNN decide a nivel persona.</p>
+        <div class="col" style="gap:16px;">
+          <p class="body"><span class="serif accent" style="font-size:38px;">2</span>&nbsp;&nbsp;derivados — fALFF y ReHo</p>
+          <p class="body"><span class="serif accent" style="font-size:38px;">3</span>&nbsp;&nbsp;vistas — sagital, coronal, axial</p>
+          <p class="body"><span class="serif accent" style="font-size:38px;">6</span>&nbsp;&nbsp;canales de 64×64 px por sujeto</p>
+        </div>
+        <p class="small">Cada corte se normaliza por percentiles [1, 99] y se guarda como PNG de 8 bits — homogeneizando el contraste entre scanners.</p>
+      </div>
+      <div class="card col center" style="flex:1; padding:44px; gap:24px;">
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%;">
+          <div class="ch">SAG</div><div class="ch">COR</div><div class="ch">AX</div>
+          <div class="ch">SAG</div><div class="ch">COR</div><div class="ch">AX</div>
+        </div>
+        <p class="small" style="text-align:center;"><span class="mono">fALFF</span> (fila 1) · <span class="mono">ReHo</span> (fila 2) → tensor <span class="mono">(6, 64, 64)</span></p>
+      </div>
+    </div>
+  </div>
+  <style>
+    .ch{ aspect-ratio:1; border-radius:10px; border:1px solid var(--border);
+      background:linear-gradient(135deg,#3a3a4a,#6a6a7a 45%,#cfcfd8);
+      display:flex; align-items:flex-end; justify-content:flex-start;
+      padding:8px 10px; color:rgba(255,255,255,0.85); font-family:var(--font-mono);
+      font-size:18px; }
+  </style>
+</section>
+
+<!-- 06 · CORTES VBM -->
+<section class="slide" data-label="Cortes VBM">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Apuesta metodológica · 1 (continuación)</span>
+      <h2 class="title">¿Qué cortes mirar? Los elige el dato, no el ojo</h2>
+    </div>
+    <div class="flex grow" style="gap:36px;">
+      <div class="card col" style="flex:1.2; padding:42px; gap:22px; justify-content:center;">
+        <p class="body">Para cada derivado se calcula el <span class="accent">Cohen's d vóxel a vóxel</span> entre ASD y TC. Por cada eje se elige el plano cuya señal diferencial promedio es máxima dentro de una máscara cerebral.</p>
+        <p class="small">Robusto: descarta planos de borde y planos casi sin cerebro. Crucial — excluye los sitios de test del cálculo, para no contaminar la evaluación.</p>
+        <div class="flex" style="gap:14px; margin-top:6px; flex-wrap:wrap;">
+          <span class="chip mono">fALFF → (10, 8, 17)</span>
+          <span class="chip mono">ReHo → (30, 10, 48)</span>
+        </div>
+      </div>
+      <div class="card col center" style="flex:1; padding:42px; gap:18px; background:var(--accent-tint);">
+        <span class="overline" style="font-size:var(--type-small);">Hallazgo honesto</span>
+        <p class="serif" style="font-size:96px; font-weight:var(--w-light); color:var(--terracotta); line-height:1;">|d| ≈ 0.08</p>
+        <p class="body" style="text-align:center;">El método de selección es correcto — pero opera sobre un efecto <span class="accent">despreciable</span>. La señal casi no existe.</p>
+      </div>
+    </div>
+  </div>
+  <style>
+    .chip{ border:1px solid var(--border-strong); border-radius:var(--r-pill);
+      padding:10px 22px; font-size:24px; color:var(--ink); }
+  </style>
+</section>
+
+<!-- 07 · EL EFECTO DE SITIO -->
+<section class="slide" data-label="Efecto de sitio">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Apuesta metodológica · 2</span>
+      <h2 class="title">El enemigo: el efecto de sitio</h2>
+    </div>
+    <div class="flex grow" style="gap:44px; align-items:center;">
+      <div class="col" style="flex:1; gap:28px;">
+        <p class="subtitle serif" style="font-weight:var(--w-light); line-height:1.28;">ABIDE combina ~20 scanners con protocolos distintos.</p>
+        <p class="lead" style="color:var(--ink);">El riesgo central: que la CNN aprenda la <span class="accent" style="font-weight:var(--w-medium);">firma del scanner</span> en lugar de la patología — y que parezca acertar cuando en realidad está reconociendo el equipo.</p>
+      </div>
+      <div class="card col center" style="flex:1; padding:50px; gap:22px;">
+        <div class="flex" style="gap:30px; align-items:center;">
+          <div class="scanner">Scanner A</div>
+          <div class="scanner">Scanner B</div>
+          <div class="scanner">Scanner C</div>
+        </div>
+        <p class="body" style="text-align:center; max-width:520px;">Generalizar a un scanner <span class="accent">no visto</span> es el verdadero examen del modelo.</p>
+      </div>
+    </div>
+  </div>
+  <style>
+    .scanner{ width:150px; height:150px; border-radius:var(--r-lg);
+      border:1px solid var(--border-strong);
+      background:linear-gradient(135deg,#2a2a36,#5a5a6c);
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,0.82); font-family:var(--font-mono); font-size:22px; }
+  </style>
+</section>
+
+<!-- 08 · DANN -->
+<section class="slide" data-label="DANN">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Apuesta metodológica · 2 (respuesta)</span>
+      <h2 class="title">Adaptación adversarial de dominio (DANN)</h2>
+    </div>
+    <div class="flex grow" style="gap:36px;">
+      <div class="card col" style="flex:1; padding:40px; gap:14px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Extractor compartido</span>
+        <p class="body">Aprende features de la imagen del cerebro.</p>
+      </div>
+      <div class="col center" style="flex:0 0 60px;"><div class="serif accent" style="font-size:60px;">→</div></div>
+      <div class="col" style="flex:1.4; gap:24px;">
+        <div class="card col" style="padding:36px; gap:10px;">
+          <span class="overline" style="font-size:var(--type-small); color:var(--positive);">Cabeza de tarea</span>
+          <p class="body">Predice ASD vs TC.</p>
+        </div>
+        <div class="card col" style="padding:36px; gap:10px;">
+          <span class="overline" style="font-size:var(--type-small);">Cabeza de dominio + GRL</span>
+          <p class="body">Intenta adivinar el scanner. La capa de <span class="accent">gradiente invertido</span> fuerza al extractor a volverse <span class="accent">invariante</span> al sitio.</p>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:34px; max-width:1560px;">Si el extractor logra que el sitio sea inadivinable, sus features dependen de la señal cerebral — no del equipo que la midió.</p>
+  </div>
+</section>
+
+<!-- 09 · EL MODELO -->
+<section class="slide" data-label="El modelo">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">El modelo · ASD_DANN</span>
+      <h2 class="title">Una CNN deliberadamente liviana</h2>
+    </div>
+    <div class="flex grow" style="gap:36px; align-items:center;">
+      <div class="card col center" style="flex:0 0 440px; padding:48px; gap:10px;">
+        <p class="serif" style="font-size:130px; font-weight:var(--w-light); color:var(--terracotta); line-height:1;">29 027</p>
+        <p class="body" style="text-align:center;">parámetros entrenables</p>
+      </div>
+      <div class="col" style="flex:1; gap:22px;">
+        <p class="lead" style="color:var(--ink);">Tres bloques <span class="mono" style="font-size:24px;">Conv → BatchNorm → ReLU → MaxPool → Dropout</span>, de 6 a 64 canales, rematados por <span class="accent">Global Average Pooling</span> a un vector de 64.</p>
+        <div class="flex" style="gap:14px; align-items:center; flex-wrap:wrap;">
+          <span class="stage">6 ch</span><span class="arr">→</span>
+          <span class="stage">16</span><span class="arr">→</span>
+          <span class="stage">32</span><span class="arr">→</span>
+          <span class="stage">64</span><span class="arr">→</span>
+          <span class="stage">GAP</span>
+        </div>
+        <p class="body">Modelo chico a propósito: con ~800 sujetos, una red grande sobreajustaría. GAP, dropout, label smoothing y weight decay forman una regularización coherente con el tamaño del dato.</p>
+      </div>
+    </div>
+  </div>
+  <style>
+    .stage{ border:1px solid var(--border-strong); border-radius:var(--r-md);
+      padding:12px 24px; font-family:var(--font-mono); font-size:24px; background:var(--surface); }
+    .arr{ color:var(--ink-40); font-size:28px; }
+  </style>
+</section>
+
+<!-- 10 · COMPARACIÓN CONTROLADA -->
+<section class="slide" data-label="Comparación controlada">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Diseño experimental</span>
+      <h2 class="title">Una comparación controlada: solo cambia alpha</h2>
+    </div>
+    <div class="flex grow" style="gap:36px; align-items:stretch;">
+      <div class="card col" style="flex:1; padding:44px; gap:16px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Con DANN</span>
+        <p class="mono accent" style="font-size:40px;">alpha = dann_alpha</p>
+        <p class="body">El gradiente de dominio llega al extractor y lo empuja a ser invariante al sitio.</p>
+      </div>
+      <div class="card col" style="flex:1; padding:44px; gap:16px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Sin DANN</span>
+        <p class="mono" style="font-size:40px; color:var(--ink-60);">alpha = 0</p>
+        <p class="body">El gradiente de dominio se anula exactamente. El extractor solo ve la tarea.</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:34px; max-width:1620px;">Ambos modelos son <span class="accent">el mismo</span> <span class="mono" style="font-size:26px;">ASD_DANN</span>: idénticos parámetros, inicialización y estado de azar. Lo único que cambia es un hiperparámetro — eliminando confusores de la comparación.</p>
+  </div>
+</section>
+
+<!-- 11 · FLUJO -->
+<section class="slide" data-label="Pipeline">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Flujo de punta a punta</span>
+      <h2 class="title">Del S3 de ABIDE a las métricas de test</h2>
+    </div>
+    <div class="grow flex" style="align-items:stretch; gap:0;">
+      <div class="step"><span class="stepn">1</span><span class="steph">Descarga + rasterizado</span><span class="stepd">Baja .nii.gz, extrae cortes, normaliza y guarda PNG por sujeto.</span></div>
+      <div class="sarr">→</div>
+      <div class="step"><span class="stepn">2</span><span class="steph">Dataset</span><span class="stepd">Agrupa 6 imágenes por sujeto, apila el tensor, augment leve.</span></div>
+      <div class="sarr">→</div>
+      <div class="step"><span class="stepn">3</span><span class="steph">Entrenamiento</span><span class="stepd">Split por sitio, DANN vía GRL, early stopping por val AUC.</span></div>
+      <div class="sarr">→</div>
+      <div class="step"><span class="stepn">4</span><span class="steph">Evaluación</span><span class="stepd">Calibra umbral en val, evalúa en test, genera figuras.</span></div>
+    </div>
+    <p class="small" style="margin-top:32px; max-width:1620px;">Los índices de corte salen de un análisis VBM previo (offline). <span class="mono">compare_dann.py</span> corre todo el flujo dos veces — con y sin DANN — sobre la misma configuración.</p>
+  </div>
+  <style>
+    .step{ flex:1; padding:34px 30px; display:flex; flex-direction:column; gap:14px;
+      border-right:1px solid var(--border); }
+    .step:first-child{ padding-left:0; }
+    .stepn{ font-family:var(--font-display); font-size:56px; font-weight:var(--w-light);
+      color:var(--terracotta); line-height:1; }
+    .steph{ font-size:28px; font-weight:var(--w-medium); }
+    .stepd{ font-size:24px; color:var(--ink-60); line-height:1.4; }
+    .sarr{ display:flex; align-items:center; padding:0 18px; color:var(--ink-40); font-size:36px; }
+  </style>
+</section>
+
+<!-- 12 · ANTI-LEAKAGE -->
+<section class="slide" data-label="Anti-leakage">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Rigor metodológico</span>
+      <h2 class="title">Blindaje contra el data leakage</h2>
+    </div>
+    <div class="grow" style="display:grid; grid-template-columns:repeat(2,1fr); gap:28px;">
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Test por sitio fijo</span>
+        <p class="body">PITT + OLIN (90 sujetos) se reservan como scanners no vistos. Verificación explícita de no-solape con train.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Fenotipos fuera del modelo</span>
+        <p class="body">Edad, sexo y sitio no entran a la red. Mejorarían las métricas, pero dejarían de medir la calidad de la representación visual.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Cortes VBM sin contaminar</span>
+        <p class="body">La selección de cortes excluye los sitios de test, para que la evaluación sea limpia.</p>
+      </div>
+      <div class="card col" style="padding:38px; gap:12px; justify-content:center;">
+        <span class="overline" style="font-size:var(--type-small);">Guard de etiquetas</span>
+        <p class="body"><span class="mono" style="font-size:23px;">validate_labels.py</span> falla si carpeta, etiqueta y DX_GROUP no coinciden — tras corregir un cruce ASD/TC invertido.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · CURVAS DE ENTRENAMIENTO -->
+<section class="slide" data-label="Curvas de entrenamiento">
+  <div class="pad">
+    <div class="head" style="margin-bottom:28px;">
+      <span class="overline">Resultados · entrenamiento</span>
+      <h2 class="title">Curvas de entrenamiento — modelo DANN</h2>
+    </div>
+    <div class="plate grow" style="padding:24px 28px;">
+      <img src="uploads/training_curves.png" alt="Curvas de loss, accuracy y AUC durante el entrenamiento del modelo DANN">
+    </div>
+    <p class="small" style="margin-top:22px;">El val AUC trepa hacia ~0.62 y el sobreajuste se mantiene controlado — pero el accuracy se mueve apenas por encima del azar. La señal aprendible es escasa.</p>
+  </div>
+</section>
+
+<!-- 14 · RESULTADOS TABLA -->
+<section class="slide" data-label="Resultados">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Resultados · test (90 sujetos, PITT + OLIN)</span>
+      <h2 class="title">DANN aparece por encima de no-DANN</h2>
+    </div>
+    <div class="grow center" style="display:flex;">
+      <table class="restable">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="dann">DANN</th>
+            <th>no-DANN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Val AUC (mejor)</td><td class="dann">0.622</td><td>0.571</td></tr>
+          <tr><td>Test AUC</td><td class="dann big">0.588</td><td class="big">0.552</td></tr>
+          <tr><td>Test balanced accuracy</td><td class="dann">0.570</td><td>0.504</td></tr>
+          <tr><td>Test AUC — OLIN / PITT</td><td class="dann">0.618 / 0.557</td><td>0.568 / 0.527</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead" style="margin-top:30px;">En <span class="accent">todas</span> las métricas de test, DANN supera a no-DANN — consistente con la hipótesis de que reducir la firma de sitio ayuda.</p>
+  </div>
+  <style>
+    .restable{ width:100%; border-collapse:collapse; font-size:30px; }
+    .restable th,.restable td{ text-align:left; padding:24px 32px; border-bottom:1px solid var(--border); }
+    .restable thead th{ font-size:var(--type-small); font-weight:var(--w-medium);
+      letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-60); border-bottom:1px solid var(--border-strong); }
+    .restable td:first-child{ color:var(--ink-60); }
+    .restable td:not(:first-child){ text-align:center; font-family:var(--font-mono); }
+    .restable th:not(:first-child){ text-align:center; }
+    .restable .dann{ color:var(--terracotta); }
+    .restable thead th.dann{ color:var(--terracotta); font-weight:var(--w-semi); }
+    .restable .big{ font-size:42px; font-weight:var(--w-medium); }
+    .restable tbody tr:last-child td{ border-bottom:none; }
+  </style>
+</section>
+
+<!-- 15 · ROC + MATRIZ -->
+<section class="slide" data-label="ROC y matriz">
+  <div class="pad">
+    <div class="head" style="margin-bottom:28px;">
+      <span class="overline">Resultados · modelo DANN en test</span>
+      <h2 class="title">ROC y matriz de confusión</h2>
+    </div>
+    <div class="flex grow" style="gap:32px;">
+      <div class="col" style="flex:1; gap:16px;">
+        <div class="plate grow"><img src="uploads/roc_curve.png" alt="Curva ROC del modelo DANN, AUC 0.5883"></div>
+        <p class="small" style="text-align:center;">AUC = 0.588 — apenas por encima de la diagonal de azar.</p>
+      </div>
+      <div class="col" style="flex:1; gap:16px;">
+        <div class="plate grow"><img src="uploads/confusion_matrix.png" alt="Matriz de confusión del modelo DANN con umbral calibrado"></div>
+        <p class="small" style="text-align:center;">Con umbral calibrado, el modelo reparte ambas clases — sin colapsar a una sola.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 · INTERPRETACIÓN (DARK STAR) -->
+<section class="slide dark" data-label="Interpretación">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Interpretación rigurosa</span>
+      <h2 class="title" style="color:#f8f1e8;">Una tendencia favorable — no una prueba</h2>
+    </div>
+    <div class="flex grow" style="gap:44px; align-items:center;">
+      <div class="col" style="flex:1; gap:30px;">
+        <p class="subtitle serif" style="color:#f4ece2; font-weight:var(--w-light); line-height:1.3;">DANN gana en todas las métricas, pero la diferencia <span style="color:var(--terracotta-soft);">no es estadísticamente significativa</span>.</p>
+        <p class="lead" style="color:rgba(244,236,226,0.78);">Con n = 90, el intervalo de confianza del AUC de DANN incluye el azar, y la diferencia de 0.036 tiene p ≈ 0.67. Un solo split y una sola corrida no alcanzan para atribuir la mejora a DANN en vez de a la variabilidad muestral.</p>
+      </div>
+      <div class="card col center" style="flex:0 0 620px; padding:46px; gap:30px;">
+        <span class="overline" style="font-size:var(--type-small);">AUC de test · DANN</span>
+        <p class="serif" style="font-size:96px; font-weight:var(--w-light); color:var(--terracotta-soft); line-height:1;">0.588</p>
+        <div style="width:100%;">
+          <div class="cibar">
+            <div class="cifill"></div>
+            <div class="ci-chance"></div>
+            <div class="ci-point"></div>
+          </div>
+          <div class="flex" style="justify-content:space-between; margin-top:14px;">
+            <span class="small" style="color:rgba(244,236,226,0.6);">0.471</span>
+            <span class="small" style="color:var(--terracotta-soft);">azar · 0.5</span>
+            <span class="small" style="color:rgba(244,236,226,0.6);">0.706</span>
+          </div>
+          <p class="small" style="text-align:center; margin-top:18px; color:rgba(244,236,226,0.7);">IC 95 % — cruza la línea de azar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    .cibar{ position:relative; height:18px; border-radius:var(--r-pill);
+      background:rgba(255,247,239,0.1); }
+    .cifill{ position:absolute; left:8%; right:10%; top:0; bottom:0;
+      background:rgba(228,184,148,0.35); border-radius:var(--r-pill); }
+    .ci-chance{ position:absolute; left:30%; top:-8px; bottom:-8px; width:2px;
+      background:var(--terracotta-soft); }
+    .ci-point{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:22px; height:22px; border-radius:50%; background:var(--terracotta-soft);
+      box-shadow:0 0 0 4px rgba(228,184,148,0.25); }
+  </style>
+</section>
+
+<!-- 17 · CONCLUSIONES -->
+<section class="slide" data-label="Conclusiones">
+  <div class="pad">
+    <div class="head">
+      <span class="overline">Conclusiones · próximos pasos</span>
+      <h2 class="title">Qué logra el trabajo — y qué falta</h2>
+    </div>
+    <div class="flex grow" style="gap:36px;">
+      <div class="card col" style="flex:1; padding:44px; gap:20px;">
+        <span class="overline" style="font-size:var(--type-small); color:var(--positive);">Lo que logra</span>
+        <p class="body">Un pipeline reproducible y prolijo: cuidadoso con el data leakage y con una comparación DANN vs no-DANN genuinamente controlada.</p>
+        <p class="body">El AUC ≈ 0.59 refleja la <span class="accent">dificultad intrínseca</span> del problema más que una falla del código — la literatura ronda esos valores.</p>
+      </div>
+      <div class="card col" style="flex:1; padding:44px; gap:20px;">
+        <span class="overline" style="font-size:var(--type-small);">Lo que falta</span>
+        <p class="body">Validación <span class="accent">leave-one-site-out</span> con tests pareados, para dar poder estadístico a la comparación.</p>
+        <p class="body">Volúmenes 3D completos en lugar de cortes 2D, y explorar representaciones con más señal discriminante.</p>
+      </div>
+    </div>
+    <p class="subtitle serif" style="margin-top:36px; font-weight:var(--w-light); line-height:1.3; max-width:1620px;">Objetivo pedagógico cumplido — la conclusión honesta es <span class="accent">«tendencia favorable, no concluyente»</span>.</p>
+  </div>
+</section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

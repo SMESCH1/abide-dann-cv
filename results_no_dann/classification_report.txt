@@ -1,0 +1,12 @@
+Reporte de Clasificación — Test Set
+(usando threshold optimizado = 0.490)
+==================================================
+
+              precision    recall  f1-score   support
+
+          TC       0.47      0.90      0.62        42
+         ASD       0.56      0.10      0.18        48
+
+    accuracy                           0.48        90
+   macro avg       0.51      0.50      0.40        90
+weighted avg       0.52      0.48      0.38        90
